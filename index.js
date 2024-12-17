@@ -3,9 +3,12 @@ import { join } from "path";
 import { readFileSync } from "fs";
 import express from "express";
 import serveStatic from "serve-static";
-
+import dotenv from "dotenv";
 import shopify from "./shopify.js";
-import PrivacyWebhookHandlers from "./privacy.js";
+import PrivacyWebhookHandlers from "./privacy.js"
+
+// Load environment variables from .env file
+dotenv.config();
 
 const PORT = parseInt(
   process.env.BACKEND_PORT || process.env.PORT || "3000",
@@ -18,6 +21,9 @@ const STATIC_PATH =
     : `${process.cwd()}/frontend/`;
 
 const app = express();
+
+// Middleware to parse JSON requests
+app.use(express.json());
 
 // Set up Shopify authentication and webhook handling
 app.get(shopify.config.auth.path, shopify.auth.begin());
@@ -140,21 +146,22 @@ app.put("/api/products/update", async (req, res) => {
   
   
   
+// Middleware for serving static files with Shopify's CSP headers
 app.use(shopify.cspHeaders());
 app.use(serveStatic(STATIC_PATH, { index: false }));
 
-app.use("/*", shopify.ensureInstalledOnShop(), (_req, res) => {
+// Catch-all route to serve the React app
+app.use("/*", shopify.ensureInstalledOnShop(), async (req, res) => {
   return res
     .status(200)
     .set("Content-Type", "text/html")
-    .send(
-      readFileSync(join(STATIC_PATH, "index.html"))
-        .toString()
-        .replace("%VITE_SHOPIFY_API_KEY%", process.env.SHOPIFY_API_KEY || "")
-    );
+    .send(readFileSync(join(STATIC_PATH, "index.html")));
 });
 
-app.listen(PORT);
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
 
 
 
