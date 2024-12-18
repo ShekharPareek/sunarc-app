@@ -11,19 +11,23 @@ import PrivacyWebhookHandlers from "./privacy.js"
 dotenv.config();
 
 const PORT = parseInt(
-  process.env.BACKEND_PORT || process.env.PORT || "3000",
+  process.env.BACKEND_PORT || process.env.PORT || "3001",
   10
 );
 
 const STATIC_PATH =
   process.env.NODE_ENV === "production"
-    ? `${process.cwd()}/frontend/dist`
-    : `${process.cwd()}/frontend/`;
+    ? `${process.cwd()}/dist/`
+    : `${process.cwd()}/dist/`;
 
 const app = express();
 
-// Middleware to parse JSON requests
-app.use(express.json());
+// Middleware to capture raw body for HMAC verification
+app.use(express.json({
+  verify: (req, res, buf) => {
+    req.rawBody = buf.toString(); // Capture the raw body as a string
+  }
+}));
 
 // Set up Shopify authentication and webhook handling
 app.get(shopify.config.auth.path, shopify.auth.begin());
