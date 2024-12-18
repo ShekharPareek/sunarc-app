@@ -46,7 +46,6 @@ app.post(
 
 app.use("/api/*", shopify.validateAuthenticatedSession());
 
-app.use(express.json());
 
 
 
