@@ -146,26 +146,24 @@ app.put("/api/products/update", async (req, res) => {
   
   
   
-// Middleware for serving static files with Shopify's CSP headers
-app.use(shopify.cspHeaders());
-app.use(serveStatic(STATIC_PATH, { index: false }));
-
-// Catch-all route to serve the React app
-app.use("/*", shopify.ensureInstalledOnShop(), async (req, res) => {
-  return res
-    .status(200)
-    .set("Content-Type", "text/html")
-    .send(readFileSync(join(STATIC_PATH, "index.html")));
-});
-
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
-
-
-
-
+    app.use(shopify.cspHeaders());
+    app.use(serveStatic(STATIC_PATH, { index: false }));
+    
+    // ensure install
+    
+    app.use("/*", shopify.ensureInstalledOnShop(), async (_req, res, _next) => {
+      return res
+        .status(200)
+        .set("Content-Type", "text/html")
+        .send(readFileSync(join(STATIC_PATH, "index.html")));
+    });
+    
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+    
+    
+    
 
 
 
