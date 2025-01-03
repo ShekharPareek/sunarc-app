@@ -1,21 +1,19 @@
 {
-    "version": 2,
-    "nodeVersion": "16.x",
-    "builds": [
+  "version": 2,
+  "builds": [
       {
-        "src": "dist/**/*",
-        "use": "@vercel/static"
-      }
-    ],
-    "rewrites": [
-      {
-        "source": "/api/(.*)",
-        "destination": "/api/$1"
+          "src": "*.js",
+          "use": "@vercel/node"
       },
       {
-        "source": "/(.*)",
-        "destination": "/"
+          "src": "dist/**/*",
+          "use": "@vercel/static"
       }
-    ]
-  }
-  
+  ],
+  "rewrites": [
+      {
+          "source": "/(.*)",
+          "destination": "/"
+      }
+  ]
+}
