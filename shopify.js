@@ -2,7 +2,7 @@ import { LATEST_API_VERSION } from "@shopify/shopify-api";
 import { shopifyApp } from "@shopify/shopify-app-express";
 import { MemorySessionStorage } from "@shopify/shopify-app-session-storage-memory";
 // import { SQLiteSessionStorage } from "@shopify/shopify-app-session-storage-sqlite";  // Import SQLite session storage
-import { restResources } from "@shopify/shopify-api/rest/admin/2025-02-01";
+import { restResources } from "@shopify/shopify-api/rest/admin/2025-02";
 import dotenv from 'dotenv';
 // Th
 
