@@ -49,14 +49,14 @@ app.use("/api/*", shopify.validateAuthenticatedSession());
 
 
 
-app.get("/api/shop/all", async (_req,res)=>{
-  // Session is built by the OAuth process
-  const session = res.locals.shopify.session ;
-      const shopData =  await shopify.api.rest.Shop.all({
-          session: session,
-        });
-        res.status(200).send(shopData);
-  });
+// app.get("/api/shop/all", async (_req,res)=>{
+//   // Session is built by the OAuth process
+//   const session = res.locals.shopify.session ;
+//       const shopData =  await shopify.api.rest.Shop.all({
+//           session: session,
+//         });
+//         res.status(200).send(shopData);
+//   });
 
 
 app.get("/api/products/all", async (_req, res) => {
