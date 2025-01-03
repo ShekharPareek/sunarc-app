@@ -15,5 +15,6 @@
           "source": "/(.*)",
           "destination": "/"
       }
-  ]
+  ],
+  "nodeVersion": "16.x"
 }
