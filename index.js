@@ -100,7 +100,55 @@ app.put("/api/products/update", async (req, res) => {
 
 
 
-  app.put("/api/product/imageupdate", async (_req,res) => {
+  // app.put("/api/product/imageupdate", async (_req,res) => {
+  //   try {
+  //     console.log("Request body:", _req.body); // Log request body
+  //     const { images } = _req.body;
+  
+  //     if (!images || !Array.isArray(images)) {
+  //       return res.status(400).json({ error: "Invalid 'images' payload." });
+  //     }
+  //     const updatedImages = [];
+      
+  //     for (const image of images) {
+  //       if (!image.product_id || !image.id || !image.position) {
+  //         console.error("Invalid image object:", image);
+  //         continue; // Skip invalid image objects
+  //       }
+  
+  //       const productImage = new shopify.api.rest.Image({
+  //         session: res.locals.shopify.session,
+  //       });
+  
+  //       productImage.product_id = image.product_id; // Product ID
+  //       productImage.id = image.id; // Image ID
+  //       productImage.position = image.position; // Image position
+  //       productImage.alt = "new alt tag content"; // Alt text
+  
+  //       try {
+  //         await productImage.save({
+  //           update: true,
+  //         });
+  //         console.log(`Image with ID ${image.id} updated successfully`,req.body);
+  //         console.log("Hear the images",productImage);
+  //       } catch (error) {
+  //         console.error(`Error updating image with ID ${image.id}:`, error);
+  //       }
+  //     }
+  
+  //     res.status(200).json({
+  //       message: "Product images updated successfully.",
+  //       response: images // or any relevant data you want to send back
+  //     });
+      
+  //   } catch (error) {
+  //     console.error("Error updating product images:", error);
+  //     res.status(500).json({ error: "Failed to update product images from backend." });
+  //   }
+  // });
+  
+
+  app.put("/api/product/imageupdate", async (_req, res) => {
     try {
       console.log("Request body:", _req.body); // Log request body
       const { images } = _req.body;
@@ -108,8 +156,9 @@ app.put("/api/products/update", async (req, res) => {
       if (!images || !Array.isArray(images)) {
         return res.status(400).json({ error: "Invalid 'images' payload." });
       }
+  
       const updatedImages = [];
-      
+  
       for (const image of images) {
         if (!image.product_id || !image.id || !image.position) {
           console.error("Invalid image object:", image);
@@ -126,11 +175,10 @@ app.put("/api/products/update", async (req, res) => {
         productImage.alt = "new alt tag content"; // Alt text
   
         try {
-          await productImage.save({
+          const response = await productImage.save({
             update: true,
           });
-          console.log(`Image with ID ${image.id} updated successfully`,req.body);
-          console.log("Hear the images",productImage);
+          console.log(`Image with ID ${image.id} updated successfully`, response); // Log the response
         } catch (error) {
           console.error(`Error updating image with ID ${image.id}:`, error);
         }
@@ -138,9 +186,9 @@ app.put("/api/products/update", async (req, res) => {
   
       res.status(200).json({
         message: "Product images updated successfully.",
-        response: images // or any relevant data you want to send back
+        response: images, // or any relevant data you want to send back
       });
-      
+  
     } catch (error) {
       console.error("Error updating product images:", error);
       res.status(500).json({ error: "Failed to update product images from backend." });
