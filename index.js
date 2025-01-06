@@ -44,20 +44,23 @@ app.post(
 // If you are adding routes outside of the /api path, remember to
 // also add a proxy rule for them in web/frontend/vite.config.js..
 
+
+
+
+
+
+// app.get("/api/shop/all", async (_req,res)=>{
+//   // Session is built by the OAuth process
+//   const session = res.locals.shopify.session ;
+//       const shopData =  await shopify.api.rest.Shop.all({
+//           session: session,
+//         });
+//         res.status(200).send(shopData);
+//   });
+
+
+
 app.use("/api/*", shopify.validateAuthenticatedSession());
-
-
-
-
-app.get("/api/shop/all", async (_req,res)=>{
-  // Session is built by the OAuth process
-  const session = res.locals.shopify.session ;
-      const shopData =  await shopify.api.rest.Shop.all({
-          session: session,
-        });
-        res.status(200).send(shopData);
-  });
-
 
 app.get("/api/products/all", async (_req, res) => {
   const session = res.locals.shopify.session ;
@@ -95,6 +98,39 @@ app.put("/api/products/update", async (req, res) => {
   } catch (error) {
     console.error("Error updating product:", error.message);
     res.status(500).json({ error: "Failed to update product." });
+  }
+});
+
+
+
+app.put("/api/product/imageupdate", async (req, res) => {
+  try {
+    // Extract product ID, image ID, position, and alt text from request body
+    const { productId, id, position, altText } = req.body;
+
+    if (!productId || !id || position == null) {
+      return res.status(400).json({ error: "Product ID, image ID, and position are required." });
+    }
+
+    // Access the current session (created via OAuth)
+    const session = res.locals.shopify.session;
+
+    // Create an Image instance
+    const productImage = new shopify.api.rest.Image({ session });
+    productImage.product_id = productId; // Associate with the product
+    productImage.id = id;           // The ID of the image to update
+    productImage.position = position;    // Update image position
+    productImage.alt = altText || "this is it";    // Update alt text (optional)
+
+    // Save changes to Shopify
+    await productImage.save({
+      update: true,
+    });
+
+    res.status(200).json({ message: "Product image updated successfully." });
+  } catch (error) {
+    console.error("Error updating product image:", error.message);
+    res.status(500).json({ error: "Failed to update product image." });
   }
 });
 
@@ -202,36 +238,6 @@ app.put("/api/products/update", async (req, res) => {
  
 
 
-  app.put("/api/products/imageupdate", async (req, res) => {
-    try {
-      // Extract product ID, image ID, position, and alt text from request body
-      const { productId, imageId, position, altText } = req.body;
-  
-      if (!productId || !imageId || position == null) {
-        return res.status(400).json({ error: "Product ID, image ID, and position are required." });
-      }
-  
-      // Access the current session (created via OAuth)
-      const session = res.locals.shopify.session;
-  
-      // Create an Image instance
-      const productImage = new shopify.api.rest.Image({ session });
-      productImage.product_id = productId; // Associate with the product
-      productImage.id = imageId;           // The ID of the image to update
-      productImage.position = position;    // Update image position
-      productImage.alt = altText || "";    // Update alt text (optional)
-  
-      // Save changes to Shopify
-      await productImage.save({
-        update: true,
-      });
-  
-      res.status(200).json({ message: "Product image updated successfully." });
-    } catch (error) {
-      console.error("Error updating product image:", error.message);
-      res.status(500).json({ error: "Failed to update product image." });
-    }
-  });
   
   
   
