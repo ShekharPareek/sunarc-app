@@ -148,55 +148,91 @@ app.put("/api/products/update", async (req, res) => {
   // });
   
 
-  app.put("/api/product/imageupdate", async (_req, res) => {
-    try {
-      console.log("Request body:", _req.body); // Log request body
-      const { images } = _req.body;
+
+
+
+
+  // app.put("/api/product/imageupdate", async (_req, res) => {
+  //   try {
+  //     console.log("Request body:", _req.body); // Log request body
+  //     const { images } = _req.body;
   
-      if (!images || !Array.isArray(images)) {
-        return res.status(400).json({ error: "Invalid 'images' payload." });
-      }
+  //     if (!images || !Array.isArray(images)) {
+  //       return res.status(400).json({ error: "Invalid 'images' payload." });
+  //     }
   
-      const updatedImages = [];
+  //     const updatedImages = [];
   
-      for (const image of images) {
-        if (!image.product_id || !image.id || !image.position) {
-          console.error("Invalid image object:", image);
-          continue; // Skip invalid image objects
-        }
+  //     for (const image of images) {
+  //       if (!image.product_id || !image.id || !image.position) {
+  //         console.error("Invalid image object:", image);
+  //         continue; // Skip invalid image objects
+  //       }
   
-        const productImage = new shopify.api.rest.Image({
-          session: res.locals.shopify.session,
-        });
+  //       const productImage = new shopify.api.rest.Image({
+  //         session: res.locals.shopify.session,
+  //       });
+
+  //       productImage.product_id = image.product_id; // Product ID
+  //       productImage.id = image.id; // Image ID
+  //       productImage.position = image.position; // Image position
+  //       productImage.alt = "new alt tag content"; // Alt text
   
-        productImage.product_id = image.product_id; // Product ID
-        productImage.id = image.id; // Image ID
-        productImage.position = image.position; // Image position
-        productImage.alt = "new alt tag content"; // Alt text
+  //       try {
+  //         const response = await productImage.save({
+  //           update: true,
+  //         });
+  //         console.log(`Image with ID ${image.id} updated successfully`, response); // Log the response
+  //       } catch (error) {
+  //         console.error(`Error updating image with ID ${image.id}:`, error);
+  //       }
+  //     }
   
-        try {
-          const response = await productImage.save({
-            update: true,
-          });
-          console.log(`Image with ID ${image.id} updated successfully`, response); // Log the response
-        } catch (error) {
-          console.error(`Error updating image with ID ${image.id}:`, error);
-        }
-      }
+  //     res.status(200).json({
+  //       message: "Product images updated successfully.",
+  //       response: images, // or any relevant data you want to send back
+  //     });
   
-      res.status(200).json({
-        message: "Product images updated successfully.",
-        response: images, // or any relevant data you want to send back
-      });
-  
-    } catch (error) {
-      console.error("Error updating product images:", error);
-      res.status(500).json({ error: "Failed to update product images from backend." });
-    }
-  });
+  //   } catch (error) {
+  //     console.error("Error updating product images:", error);
+  //     res.status(500).json({ error: "Failed to update product images from backend." });
+  //   }
+  // });
   
  
 
+
+  app.put("/api/products/imageupdate", async (req, res) => {
+    try {
+      // Extract product ID, image ID, position, and alt text from request body
+      const { productId, imageId, position, altText } = req.body;
+  
+      if (!productId || !imageId || position == null) {
+        return res.status(400).json({ error: "Product ID, image ID, and position are required." });
+      }
+  
+      // Access the current session (created via OAuth)
+      const session = res.locals.shopify.session;
+  
+      // Create an Image instance
+      const productImage = new shopify.api.rest.Image({ session });
+      productImage.product_id = productId; // Associate with the product
+      productImage.id = imageId;           // The ID of the image to update
+      productImage.position = position;    // Update image position
+      productImage.alt = altText || "";    // Update alt text (optional)
+  
+      // Save changes to Shopify
+      await productImage.save({
+        update: true,
+      });
+  
+      res.status(200).json({ message: "Product image updated successfully." });
+    } catch (error) {
+      console.error("Error updating product image:", error.message);
+      res.status(500).json({ error: "Failed to update product image." });
+    }
+  });
+  
   
   
   
