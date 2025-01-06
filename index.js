@@ -103,34 +103,37 @@ app.put("/api/products/update", async (req, res) => {
 
 
 
-app.put("/api/product/imageupdate", async (req, res) => {
+app.put("/api/product/imageupdate", async (_req, res) => {
   try {
-    // Extract product ID, image ID, position, and alt text from request body
-    const { productId, id, position, altText } = req.body;
-
-    if (!productId || !id || position == null) {
-      return res.status(400).json({ error: "Product ID, image ID, and position are required." });
+    const { images } = _req.body;
+    if (!images || !Array.isArray(images)) {
+      return res.status(400).json({ error: "Invalid 'images' payload." });
     }
 
-    // Access the current session (created via OAuth)
-    const session = res.locals.shopify.session;
+    console.log("Received images payload:", images);
 
-    // Create an Image instance
-    const productImage = new shopify.api.rest.Image({ session });
-    productImage.product_id = productId; // Associate with the product
-    productImage.id = id;           // The ID of the image to update
-    productImage.position = position;    // Update image position
-    productImage.alt = altText || "this is it";    // Update alt text (optional)
+    const updatedImages = [];
+    for (const image of images) {
+      try {
+        const productImage = new shopify.api.rest.Image({
+          session: res.locals.shopify.session,
+        });
+        productImage.product_id = image.productId;
+        productImage.id = image.id;
+        productImage.position = image.position;
 
-    // Save changes to Shopify
-    await productImage.save({
-      update: true,
-    });
+        await productImage.save({ update: true });
+        console.log(`Image updated successfully for ID: ${image.id}`);
+        updatedImages.push(image.id);
+      } catch (error) {
+        console.error(`Failed to update image with ID ${image.id}:`, error.response ? error.response.data : error.message);
+      }
+    }
 
-    res.status(200).json({ message: "Product image updated successfully." });
+    res.status(200).json({ message: "Product images updated successfully.", updatedImages });
   } catch (error) {
-    console.error("Error updating product image:", error.message);
-    res.status(500).json({ error: "Failed to update product image." });
+    console.error("Error updating product images:", error);
+    res.status(500).json({ error: "Failed to update product images from backend." });
   }
 });
 
