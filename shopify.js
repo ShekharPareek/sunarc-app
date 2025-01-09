@@ -1,7 +1,7 @@
 import { LATEST_API_VERSION } from "@shopify/shopify-api";
 import { shopifyApp } from "@shopify/shopify-app-express";
-// import { MemorySessionStorage } from "@shopify/shopify-app-session-storage-memory";
-import { SQLiteSessionStorage } from "@shopify/shopify-app-session-storage-sqlite";
+import { MemorySessionStorage } from "@shopify/shopify-app-session-storage-memory";
+
 import { restResources } from "@shopify/shopify-api/rest/admin/2024-07";
 import dotenv from 'dotenv';
 // Th
@@ -26,12 +26,6 @@ dotenv.config();  // Load environment variables
 // const dbPath = path.join(dbDirectory, 'sessions.db');
 // const sessionDb = new SQLiteSessionStorage(dbPath);  // Use SQLite session storage in /tmp
 
-// Resolve __dirname for ES Modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const DB_PATH = path.join(process.cwd(), 'database.sqlite');
-
 const shopify = shopifyApp({
   api: {
     apiVersion: LATEST_API_VERSION,
@@ -48,8 +42,8 @@ const shopify = shopifyApp({
   webhooks: {
     path: "/api/webhooks",
   },
-  // sessionStorage: new MemorySessionStorage()
-  sessionStorage: new SQLiteSessionStorage(DB_PATH),
+  sessionStorage: new MemorySessionStorage()
+  // sessionStorage: new SQLiteSessionStorage(DB_PATH),  // Use SQLite for session storage
 });
 
 async function createWebhook(shop, accessToken) {
