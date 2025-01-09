@@ -9,7 +9,7 @@ import dotenv from 'dotenv';
 dotenv.config();  // Load environment variables
 
 
-const DB_PATH = path.join(process.cwd(), 'database.sqlite');
+
 // /// Manually create __dirname for ES module
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = path.dirname(__filename);
@@ -26,9 +26,15 @@ const DB_PATH = path.join(process.cwd(), 'database.sqlite');
 // const dbPath = path.join(dbDirectory, 'sessions.db');
 // const sessionDb = new SQLiteSessionStorage(dbPath);  // Use SQLite session storage in /tmp
 
+// Resolve __dirname for ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const DB_PATH = path.join(process.cwd(), 'database.sqlite');
+
 const shopify = shopifyApp({
   api: {
-    apiVersion: "2024-01",
+    apiVersion: LATEST_API_VERSION,
     apiKey: process.env.SHOPIFY_API_KEY,
     apiSecretKey: process.env.SHOPIFY_API_SECRET,
     scopes: process.env.SHOPIFY_SCOPES,
