@@ -28,7 +28,7 @@ const DB_PATH = path.join(process.cwd(), 'database.sqlite');
 
 const shopify = shopifyApp({
   api: {
-    apiVersion: LATEST_API_VERSION,
+    apiVersion: "2024-01",
     apiKey: process.env.SHOPIFY_API_KEY,
     apiSecretKey: process.env.SHOPIFY_API_SECRET,
     scopes: process.env.SHOPIFY_SCOPES,
