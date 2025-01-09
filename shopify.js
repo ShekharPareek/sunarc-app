@@ -9,7 +9,7 @@ import dotenv from 'dotenv';
 dotenv.config();  // Load environment variables
 
 
-
+const DB_PATH = path.join(process.cwd(), 'database.sqlite');
 // /// Manually create __dirname for ES module
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = path.dirname(__filename);
@@ -42,8 +42,6 @@ const shopify = shopifyApp({
   webhooks: {
     path: "/api/webhooks",
   },
-
-  const DB_PATH = path.join(process.cwd(), 'database.sqlite');
   // sessionStorage: new MemorySessionStorage()
   sessionStorage: new SQLiteSessionStorage(DB_PATH),
 });
