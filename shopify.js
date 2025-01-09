@@ -8,7 +8,7 @@ import dotenv from 'dotenv';
 
 // 
 
-const MONGO_URI = "mongodb+srv://<usernmongodb+srv://shekharpareek:nRJxxajEi8zuZhBL@cluster0.yo9hd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0ame>:<password>@cluster0.mongodb.net/myDatabase";
+const MONGO_URI = "mongodb+srv://shekharpareek:nRJxxajEi8zuZhBL@cluster0.yo9hd.mongodb.net/myDatabase?retryWrites=true&w=majority";
 const DB_NAME = "shopify_app";
 
 dotenv.config();  // Load environment variables
