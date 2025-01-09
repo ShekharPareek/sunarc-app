@@ -2,12 +2,14 @@ import { LATEST_API_VERSION } from "@shopify/shopify-api";
 import { shopifyApp } from "@shopify/shopify-app-express";
 import { MemorySessionStorage } from "@shopify/shopify-app-session-storage-memory";
 import { restResources } from "@shopify/shopify-api/rest/admin/2024-07";
+import { MongoDBSessionStorage } from "@shopify/shopify-app-session-storage-mongodb";
 import dotenv from 'dotenv';
 // Th
 
 // 
 
-
+const MONGO_URI = "mongodb+srv://<usernmongodb+srv://shekharpareek:nRJxxajEi8zuZhBL@cluster0.yo9hd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0ame>:<password>@cluster0.mongodb.net/myDatabase";
+const DB_NAME = "shopify_app";
 
 dotenv.config();  // Load environment variables
 
@@ -45,7 +47,9 @@ const shopify = shopifyApp({
   webhooks: {
     path: "/api/webhooks",
   },
-  sessionStorage: new MemorySessionStorage(),
+  // sessionStorage: new MemorySessionStorage(),
+
+sessionStorage: new MongoDBSessionStorage(MONGO_URI, DB_NAME),
  
 
 });
